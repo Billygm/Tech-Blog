@@ -1,14 +1,14 @@
 const router = require("express").Router();
-const { BlogPosts, Users } = require("../models");
+const { Posts, Users } = require("../models");
 const withAuth = require("../utils/auth");
 
 router.get("/", async (req, res) => {
   try {
-    // Get all BlogPosts and JOIN with user data
-    const postData = await BlogPosts.findAll({
+    // Get all Posts and JOIN with user data
+    const postData = await Posts.findAll({
       include: [
         {
-          model: User,
+          model: Users,
           attributes: ["name"],
         },
       ],
@@ -27,6 +27,46 @@ router.get("/", async (req, res) => {
   }
 });
 
+router.get('/posts/:post_id', async (req, res) => {
+    try {
+      const postData = await Posts.findByPk(req.params.id, {
+        include: [
+          {
+            model: Users,
+            attributes: ['name'],
+          },
+        ],
+      });
+  
+      const post = postData.get({ plain: true });
+  
+      res.render('post', {
+        ...post,
+        logged_in: req.session.logged_in
+      });
+    } catch (err) {
+      res.status(500).json(err);
+    }
+  });
+
+router.get('/dashboard', withAuth, async (req, res) => {
+    try {
+      // Find the logged in user based on the session ID
+      const userData = await Users.findByPk(req.session.user_id, {
+        attributes: { exclude: ['password'] },
+        include: [{ model: Posts }],
+      });
+  
+      const user = userData.get({ plain: true });
+  
+      res.render('dashboard', {
+        ...user,
+        logged_in: true
+      });
+    } catch (err) {
+      res.status(500).json(err);
+    }
+  });
 
 router.get('/login', (req, res) => {
     // If the user is already logged in, redirect the request to another route
