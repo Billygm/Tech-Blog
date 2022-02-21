@@ -27,7 +27,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.get("/posts/:post_id", async (req, res) => {
+router.get("/posts/:id", async (req, res) => {
   try {
     const postData = await Posts.findByPk(req.params.id, {
       include: [
