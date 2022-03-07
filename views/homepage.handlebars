@@ -1,15 +1,11 @@
-{{#each posts as |post|}}
-  <div class="row mb-4 post">
-    <div class="col-md-3">
+<div class="d-flex flex-wrap post">
+  {{#each posts as |post|}}
+    <div class="col-md-4 mb-4">
       <h2>
         <a href="/posts/{{post.id}}">{{post.name}}</a>
       </h2>
       <p>{{format_date post.date_created}}</p>
+      <p>{{post.description}}</p>
     </div>
-    <div class="col-md-7">
-      <p>
-        {{post.description}}
-      </p>
-    </div>
-  </div>
-{{/each}}
+  {{/each}}
+</div>
